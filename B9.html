@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head><meta charset="utf-8">
+<script>/* >>> DÁN URL WEB APP (đuôi /exec) VÀO GIỮA HAI DẤU NGOẶC KÉP Ở DÒNG 5 BÊN DƯỚI <<< */
+var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzgua5fps499GIu9ze4qExscZx2uZDDs_injnMrr-rloAW-c15a-1bJ1uIO1u5l7BEp/exec";
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HSK 1 – Bài 9: Kiểm tra từ vựng nhanh</title>
+<style>
+*{box-sizing:border-box}
+:root{--c:#c23320;--ink:#2b2220;--bg:#fbf4e6;--card:#fffdf8;--line:#e6d9c0;--mute:#7a6a60}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.6 "Segoe UI",system-ui,Roboto,Arial,sans-serif}
+.w{max-width:780px;margin:0 auto;padding:16px}
+header{border-bottom:3px solid var(--c);padding:14px 0 12px;margin-bottom:16px}
+h1{margin:0;font-size:clamp(22px,5.5vw,32px);color:var(--c)}
+.sub{margin:4px 0 0;font-weight:600}
+.meta{color:var(--mute);font-size:.88em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin:0 0 14px}
+.f{display:block;font-weight:600;margin:0 0 4px}
+input[type=text]{width:100%;font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;background:#fff}
+input:focus,select:focus,button:focus-visible{outline:3px solid #e9a89b}
+.row{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:560px){.row{grid-template-columns:1fr}}
+button{font:inherit;font-weight:700;background:var(--c);color:#fff;border:0;border-radius:8px;padding:12px 22px;cursor:pointer;min-height:48px}
+button:disabled{opacity:.5;cursor:default}
+.msg{padding:10px 14px;border-radius:8px;margin:12px 0;background:#fdebe6;border:1px solid #efb4a6;color:#7d2112}
+.msg:empty{display:none}
+.han{font-family:SimSun,"Songti SC","Noto Serif CJK SC",serif;font-size:1.3em}
+.bar{position:sticky;top:0;z-index:5;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;display:flex;justify-content:space-between;font-weight:700;margin-bottom:14px}
+#time.warn{color:var(--c)}
+.q .qt{margin:0 0 8px}
+.opt{display:flex;gap:10px;align-items:center;min-height:48px;padding:6px 12px;border:1.5px solid var(--line);border-radius:8px;margin:6px 0;cursor:pointer;background:#fff}
+.opt:has(input:checked){border-color:var(--c);background:#fdebe6}
+.opt input{width:22px;height:22px;accent-color:var(--c);flex:none}
+.bank{background:#fff;border:1.5px dashed var(--line);border-radius:8px;padding:8px 12px;margin:8px 0;display:flex;flex-wrap:wrap;gap:4px 22px}
+select{font:inherit;padding:6px 8px;border:1.5px solid var(--c);border-radius:8px;background:#fff;min-height:44px}
+.score{font-size:2em;font-weight:800;color:var(--c);margin:6px 0}
+footer{text-align:center;color:var(--mute);padding:14px 0 24px}
+footer a{color:var(--c);font-weight:700}
+.hide{display:none}
+</style>
+</head>
+<body><div class="w">
+<header>
+<h1>HỌC TIẾNG TRUNG QUỐC CÔ HÀ</h1>
+<p class="sub">HSK 1 – Bài 9: Kiểm tra từ vựng nhanh</p>
+<div class="meta">Thời gian 10 phút · 20 câu · mỗi câu 0,5 điểm · tổng 10 điểm</div>
+</header>
+<div id="nourl" class="msg hide"><b>Chưa cấu hình SCRIPT_URL.</b> Hãy dán URL Web App vào dòng 5 của file HTML rồi mở lại trang.</div>
+<div class="card" id="intro">
+<div class="row">
+<div><label class="f" for="name">Họ và tên</label><input type="text" id="name" autocomplete="name"></div>
+<div><label class="f" for="cls">Lớp</label><input type="text" id="cls"></div>
+</div>
+<label class="f" for="code">Mã phòng thi</label>
+<input type="text" id="code" autocomplete="off" autocapitalize="off" style="margin-bottom:12px">
+<button id="go" type="button">Bắt đầu làm bài</button>
+<div id="m1" class="msg" role="alert"></div>
+</div>
+<div id="exam" class="hide">
+<div class="bar"><span id="prog">Đã làm 0/20</span><span id="time">10:00</span></div>
+<div id="qs"></div>
+<div class="card"><button id="sub" type="button">Nộp bài</button><div id="m2" class="msg" role="alert"></div></div>
+</div>
+<div id="res" class="card hide">
+<b>Bài đã được nộp và khóa.</b>
+<div class="score" id="sc"></div>
+<div id="cor"></div>
+</div>
+<footer>Cần hỗ trợ? Zalo <a href="https://zalo.me/0914490382">0914490382</a></footer>
+</div>
+<script>
+var $=function(i){return document.getElementById(i)};
+var S={token:null,end:0,qs:[],done:false,busy:false,timer:null};
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function han(s){return esc(s).replace(/[\u2460-\u2473\u3000-\u303f\u3400-\u9fff\uff00-\uffef]+/g,'<span class="han">$&</span>')}
+function show(id,t){$(id).textContent=t||""}
+function call(o){
+  return fetch(SCRIPT_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)})
+    .then(function(r){return r.json()});
+}
+function sel(n){
+  return '<select data-n="'+n+'" aria-label="Chọn đáp án câu '+n+'"><option value="">Chọn</option><option>A</option><option>B</option><option>C</option></select>';
+}
+function render(){
+  var L=["A","B","C"];
+  $("qs").innerHTML=S.qs.map(function(q){
+    var h='<div class="card q"><p class="qt"><b>Câu '+q.n+'.</b> ';
+    if(q.t==="tn"){
+      h+=han(q.q)+'</p>'+q.o.map(function(t,i){
+        return '<label class="opt"><input type="radio" name="q'+q.n+'" value="'+L[i]+'"><span>'+L[i]+'. '+han(t)+'</span></label>';
+      }).join("");
+    }else{
+      var stem=han(q.q);
+      h+=(q.m?stem:stem.replace("____",sel(q.n)))+'</p>';
+      h+='<div class="bank">'+q.o.map(function(t,i){return '<span>'+L[i]+'. '+han(t)+'</span>'}).join("")+'</div>';
+      if(q.m)h+='<div>Chọn: '+sel(q.n)+'</div>';
+    }
+    return h+'</div>';
+  }).join("");
+}
+function answers(){
+  return S.qs.map(function(q){
+    var e=q.t==="tn"?document.querySelector('input[name="q'+q.n+'"]:checked'):document.querySelector('select[data-n="'+q.n+'"]');
+    return e?e.value:"";
+  });
+}
+function prog(){
+  var n=answers().filter(Boolean).length;
+  show("prog","Đã làm "+n+"/"+S.qs.length);
+}
+function tick(){
+  var r=Math.max(0,Math.ceil((S.end-Date.now())/1000));
+  var t=$("time");
+  t.textContent=("0"+Math.floor(r/60)).slice(-2)+":"+("0"+r%60).slice(-2);
+  t.className=r<=60?"warn":"";
+  if(r===0&&!S.done){clearInterval(S.timer);submit(true)}
+}
+function start(){
+  if(!SCRIPT_URL){show("m1","Chưa dán SCRIPT_URL vào dòng 5 của file HTML nên chưa thể vào thi. Bài chưa bị khóa, hãy báo giáo viên.");return}
+  var n=$("name").value.trim(),c=$("cls").value.trim(),k=$("code").value.trim();
+  if(!n||!c||!k){show("m1","Hãy nhập đủ Họ và tên, Lớp và Mã phòng thi.");return}
+  show("m1","");$("go").disabled=true;$("go").textContent="Đang kiểm tra...";
+  call({action:"start",name:n,cls:c,code:k}).then(function(d){
+    if(!d.ok){show("m1",d.msg||"Không vào được phòng thi.");$("go").disabled=false;$("go").textContent="Bắt đầu làm bài";return}
+    S.token=d.token;S.qs=d.questions;render();
+    ["name","cls","code"].forEach(function(i){$(i).disabled=true});
+    $("go").classList.add("hide");$("exam").classList.remove("hide");
+    S.end=Date.now()+d.limit*1000;tick();S.timer=setInterval(tick,250);
+    $("qs").addEventListener("change",prog);prog();
+    window.scrollTo(0,$("exam").offsetTop-10);
+  }).catch(function(){
+    show("m1","Không kết nối được máy chủ. Kiểm tra mạng rồi bấm lại.");
+    $("go").disabled=false;$("go").textContent="Bắt đầu làm bài";
+  });
+}
+function submit(auto){
+  if(S.busy||S.done)return;
+  var a=answers(),miss=a.filter(function(x){return!x}).length;
+  if(!auto&&miss&&!confirm("Còn "+miss+" câu chưa làm. Vẫn nộp bài?"))return;
+  S.busy=true;$("sub").disabled=true;show("m2",auto?"Hết giờ, đang nộp bài...":"Đang nộp bài...");
+  call({action:"submit",token:S.token,name:$("name").value.trim(),cls:$("cls").value.trim(),code:$("code").value.trim(),answers:a}).then(function(d){
+    S.busy=false;
+    if(!d.ok){show("m2",(d.msg||"Nộp bài không thành công.")+" Bấm Nộp bài để thử lại.");$("sub").disabled=false;return}
+    S.done=true;clearInterval(S.timer);
+    document.querySelectorAll("#exam input,#exam select,#sub").forEach(function(e){e.disabled=true});
+    $("exam").classList.add("hide");$("res").classList.remove("hide");
+    $("sc").textContent=String(d.score).replace(".",",")+" / 10 điểm";
+    $("cor").textContent="Số câu đúng: "+d.correct+"/"+d.total;
+    window.scrollTo(0,0);
+  }).catch(function(){
+    S.busy=false;show("m2","Mất kết nối khi nộp. Bài làm vẫn được giữ, hãy bật mạng rồi bấm Nộp bài.");$("sub").disabled=false;
+  });
+}
+$("go").onclick=start;$("sub").onclick=function(){submit(false)};
+if(!SCRIPT_URL)$("nourl").classList.remove("hide");
+window.addEventListener("beforeunload",function(e){if(S.token&&!S.done){e.preventDefault();e.returnValue=""}});
+</script>
+</body>
+</html>
